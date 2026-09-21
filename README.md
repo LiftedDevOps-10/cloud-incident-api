@@ -32,3 +32,21 @@ Phase 1 - Project Setup
 - CI/CD deployment
 - Infrastructure as Code
 - Cloud monitoring
+## AWS Architecture
+
+The Cloud Incident API uses:
+
+- AWS API Gateway HTTP API
+- AWS Lambda
+- Java 21
+- Amazon DynamoDB
+- Amazon CloudWatch
+
+### DynamoDB
+
+The application stores incident records in the `cloud-incidents`
+DynamoDB table.
+
+Primary key:
+
+`incidentId`
