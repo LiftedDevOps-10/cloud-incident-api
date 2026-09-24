@@ -2,21 +2,15 @@
 target/
 *.class
 
-# IDE
-.idea/
-.vscode/
-*.iml
-
-# OS
-.DS_Store
-Thumbs.db
-
 # Terraform
 .terraform/
 *.tfstate
 *.tfstate.*
+.terraform.lock.hcl
 crash.log
 crash.*.log
+
+# Terraform variable files
 *.tfvars
 *.tfvars.json
 
@@ -25,6 +19,15 @@ crash.*.log
 .env.*
 *.pem
 *.key
+
+# Java / IDE
+.idea/
+.vscode/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
 
 # Logs
 *.log
