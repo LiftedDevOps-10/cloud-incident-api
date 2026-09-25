@@ -1,4 +1,4 @@
-name: Cloud Incident API CI
+name: Cloud Incident API CI/CD
 
 on:
   push:
@@ -65,3 +65,100 @@ jobs:
         run: |
           curl --fail --show-error --silent \
             https://nm0wmlj0hh.execute-api.eu-north-1.amazonaws.com/health
+
+      - name: Automated API CRUD Tests
+        run: |
+
+          API_URL="https://nm0wmlj0hh.execute-api.eu-north-1.amazonaws.com"
+
+          TEST_ID="CI-$(date +%s)"
+          TEST_TITLE="GitHub Actions automated test $TEST_ID"
+
+          echo "======================================"
+          echo "Creating test incident"
+          echo "======================================"
+
+          curl --fail --show-error --silent \
+            -X POST "$API_URL/incidents" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"title\": \"$TEST_TITLE\",
+              \"severity\": \"LOW\",
+              \"status\": \"OPEN\",
+              \"description\": \"Automated CI/CD CRUD test\"
+            }"
+
+          echo ""
+          echo "======================================"
+          echo "Finding created incident"
+          echo "======================================"
+
+          INCIDENT_ID=$(curl --fail --show-error --silent \
+            "$API_URL/incidents" \
+            | jq -r --arg title "$TEST_TITLE" \
+              '.incidents[] | select(.title == $title) | .incidentId')
+
+          if [ -z "$INCIDENT_ID" ] || [ "$INCIDENT_ID" = "null" ]; then
+            echo "ERROR: Created incident was not found."
+            exit 1
+          fi
+
+          echo "Created Incident ID: $INCIDENT_ID"
+
+          echo ""
+          echo "======================================"
+          echo "Testing GET"
+          echo "======================================"
+
+          curl --fail --show-error --silent \
+            "$API_URL/incidents/$INCIDENT_ID"
+
+          echo ""
+          echo "GET test passed."
+
+          echo ""
+          echo "======================================"
+          echo "Testing PUT"
+          echo "======================================"
+
+          curl --fail --show-error --silent \
+            -X PUT "$API_URL/incidents/$INCIDENT_ID" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "severity": "HIGH",
+              "status": "RESOLVED"
+            }'
+
+          echo ""
+          echo "PUT test passed."
+
+          echo ""
+          echo "======================================"
+          echo "Testing DELETE"
+          echo "======================================"
+
+          curl --fail --show-error --silent \
+            -X DELETE "$API_URL/incidents/$INCIDENT_ID"
+
+          echo ""
+          echo "DELETE test passed."
+
+          echo ""
+          echo "======================================"
+          echo "Confirming DELETE with GET"
+          echo "======================================"
+
+          STATUS_CODE=$(curl -s \
+            -o /dev/null \
+            -w "%{http_code}" \
+            "$API_URL/incidents/$INCIDENT_ID")
+
+          if [ "$STATUS_CODE" != "404" ]; then
+            echo "ERROR: Expected HTTP 404, got HTTP $STATUS_CODE"
+            exit 1
+          fi
+
+          echo "GET after DELETE returned HTTP 404."
+          echo "======================================"
+          echo "ALL API CRUD TESTS PASSED"
+          echo "======================================"
