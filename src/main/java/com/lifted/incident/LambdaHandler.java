@@ -310,11 +310,22 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
             );
         }
 
+        long dynamoStartTime = System.currentTimeMillis();
+
         dynamoDbClient.putItem(
                 PutItemRequest.builder()
                         .tableName(TABLE_NAME)
                         .item(item)
                         .build()
+        );
+
+        long dynamoDuration =
+                System.currentTimeMillis() - dynamoStartTime;
+
+        System.out.println(
+                "DynamoDB PutItem completed in "
+                        + dynamoDuration
+                        + " ms"
         );
 
         String responseBody = objectMapper.writeValueAsString(
