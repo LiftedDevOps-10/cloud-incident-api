@@ -24,7 +24,9 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
     private final ObjectMapper objectMapper;
 
     public LambdaHandler() {
-        this.dynamoDbClient = DynamoDbClient.builder().build();
+        this.dynamoDbClient = DynamoDbClient.builder()
+                .region(software.amazon.awssdk.regions.Region.EU_NORTH_1)
+                .build();
         this.objectMapper = new ObjectMapper();
     }
 
