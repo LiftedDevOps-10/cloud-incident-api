@@ -60,3 +60,8 @@ jobs:
       - name: Terraform Apply
         working-directory: terraform
         run: terraform apply -auto-approve
+
+      - name: Health Check
+        run: |
+          curl --fail --show-error --silent \
+            https://nm0wmlj0hh.execute-api.eu-north-1.amazonaws.com/health
