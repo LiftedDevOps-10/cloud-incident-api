@@ -33,7 +33,12 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
             Map<String, Object> input,
             Context context) {
 
-       System.out.println("Lambda request received");
+       System.out.println(
+               "Lambda request received: "
+                       + getHttpMethod(input)
+                       + " "
+                       + getPath(input)
+       );
 
        try {
 
