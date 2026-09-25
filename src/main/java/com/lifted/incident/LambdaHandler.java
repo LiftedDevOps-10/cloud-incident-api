@@ -33,6 +33,8 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
             Map<String, Object> input,
             Context context) {
 
+       long startTime = System.currentTimeMillis();
+
        System.out.println(
                "Lambda request received: "
                        + getHttpMethod(input)
@@ -45,50 +47,122 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
             String method = getHttpMethod(input);
             String path = getPath(input);
 
-            if ("GET".equalsIgnoreCase(method) && "/health".equals(path)) {
-                return healthResponse();
-            }
+         if ("GET".equalsIgnoreCase(method) && "/health".equals(path)) {
+             Map<String, Object> response = healthResponse();
 
-            if ("POST".equalsIgnoreCase(method)
-                    && "/incidents".equals(path)) {
-                return createIncident(input);
-            }
+             long duration = System.currentTimeMillis() - startTime;
 
-            if ("GET".equalsIgnoreCase(method)
-                    && "/incidents".equals(path)) {
-                return listIncidents();
-            }
+             System.out.println(
+                     "Lambda request completed in "
+                             + duration
+                             + " ms"
+             );
 
-            if ("GET".equalsIgnoreCase(method)
-                    && path.startsWith("/incidents/")) {
+             return response;
+         }
 
-                String incidentId = path.substring("/incidents/".length());
+          if ("POST".equalsIgnoreCase(method)
+                  && "/incidents".equals(path)) {
 
-                return getIncident(incidentId);
-            }
+              Map<String, Object> response = createIncident(input);
 
-            if ("PUT".equalsIgnoreCase(method)
-                    && path.startsWith("/incidents/")) {
+              long duration = System.currentTimeMillis() - startTime;
 
-                String incidentId = path.substring("/incidents/".length());
+              System.out.println(
+                      "Lambda request completed in "
+                              + duration
+                            + " ms"
+              );
 
-                return updateIncident(incidentId, input);
-            }
+              return response;
+          }
 
-            if ("DELETE".equalsIgnoreCase(method)
-                    && path.startsWith("/incidents/")) {
+          if ("GET".equalsIgnoreCase(method)
+                  && "/incidents".equals(path)) {
 
-                String incidentId = path.substring("/incidents/".length());
+              Map<String, Object> response = listIncidents();
 
-                return deleteIncident(incidentId);
-            }
+              long duration = System.currentTimeMillis() - startTime;
 
-           return response(
-                    404,
-                    "{\"message\":\"Route not found\"}"
-            );
+              System.out.println(
+                      "Lambda request completed in "
+                              + duration
+                              + " ms"
+              );
 
-        } catch (Exception e) {
+              return response;
+          }
+
+          if ("GET".equalsIgnoreCase(method)
+                  && path.startsWith("/incidents/")) {
+
+              String incidentId = path.substring("/incidents/".length());
+
+              Map<String, Object> response = getIncident(incidentId);
+
+              long duration = System.currentTimeMillis() - startTime;
+
+              System.out.println(
+                      "Lambda request completed in "
+                              + duration
+                              + " ms"
+              );
+
+              return response;
+          }
+
+          if ("PUT".equalsIgnoreCase(method)
+                  && path.startsWith("/incidents/")) {
+
+              String incidentId = path.substring("/incidents/".length());
+
+              Map<String, Object> response =
+                      updateIncident(incidentId, input);
+
+              long duration = System.currentTimeMillis() - startTime;
+
+              System.out.println(
+                      "Lambda request completed in "
+                              + duration
+                              + " ms"
+              );
+
+              return response;
+          }
+
+          if ("DELETE".equalsIgnoreCase(method)
+                  && path.startsWith("/incidents/")) {
+
+              String incidentId = path.substring("/incidents/".length());
+
+              Map<String, Object> response =
+                      deleteIncident(incidentId);
+
+              long duration = System.currentTimeMillis() - startTime;
+
+              System.out.println(
+                      "Lambda request completed in "
+                              + duration
+                              + " ms"
+              );
+
+              return response;
+          }
+
+             long duration = System.currentTimeMillis() - startTime;
+
+             System.out.println(
+                     "Lambda request completed in "
+                             + duration
+                             + " ms"
+             );
+
+             return response(
+                     404,
+                     "{\"message\":\"Route not found\"}"
+             );
+
+         } catch (Exception e) {
 
             if (context != null) {
                 context.getLogger().log(
@@ -96,11 +170,20 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
                 );
             }
 
+            long duration = System.currentTimeMillis() - startTime;
+
+            System.out.println(
+                    "Lambda request completed in "
+                            + duration
+                            + " ms"
+            );
+
             return response(
                     500,
                     "{\"message\":\"Internal server error\"}"
             );
         }
+
     }
 
     private String getHttpMethod(Map<String, Object> input) {
