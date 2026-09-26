@@ -24,9 +24,22 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
     private final ObjectMapper objectMapper;
 
     public LambdaHandler() {
+
+        long dynamoClientStartTime = System.currentTimeMillis();
+
         this.dynamoDbClient = DynamoDbClient.builder()
                 .region(software.amazon.awssdk.regions.Region.EU_NORTH_1)
                 .build();
+
+        long dynamoClientDuration =
+                System.currentTimeMillis() - dynamoClientStartTime;
+
+        System.out.println(
+                "DynamoDB client created in "
+                        + dynamoClientDuration
+                        + " ms"
+        );
+
         this.objectMapper = new ObjectMapper();
     }
 
