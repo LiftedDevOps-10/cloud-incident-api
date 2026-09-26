@@ -61,15 +61,20 @@ jobs:
         working-directory: terraform
         run: terraform apply -auto-approve
 
+      - name: Get API URL
+        id: api-url
+        working-directory: terraform
+        run: echo "url=$(terraform output -raw api_gateway_url)" >> "$GITHUB_OUTPUT"
+
       - name: Health Check
         run: |
           curl --fail --show-error --silent \
-            https://nm0wmlj0hh.execute-api.eu-north-1.amazonaws.com/health
+            "${{ steps.api-url.outputs.url }}/health"
 
       - name: Automated API CRUD Tests
         run: |
 
-          API_URL="https://nm0wmlj0hh.execute-api.eu-north-1.amazonaws.com"
+          API_URL="${{ steps.api-url.outputs.url }}"
 
           TEST_ID="CI-$(date +%s)"
           TEST_TITLE="GitHub Actions automated test $TEST_ID"
