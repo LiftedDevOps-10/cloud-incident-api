@@ -29,6 +29,11 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
 
         this.dynamoDbClient = DynamoDbClient.builder()
                 .region(software.amazon.awssdk.regions.Region.EU_NORTH_1)
+                .httpClientBuilder(
+                        software.amazon.awssdk.http.apache.ApacheHttpClient.builder()
+                                .connectionTimeout(java.time.Duration.ofSeconds(5))
+                                .socketTimeout(java.time.Duration.ofSeconds(10))
+                )
                 .build();
 
         long dynamoClientDuration =
