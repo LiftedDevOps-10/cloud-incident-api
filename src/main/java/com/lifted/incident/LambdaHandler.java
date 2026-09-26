@@ -34,6 +34,12 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
                                 .connectionTimeout(java.time.Duration.ofSeconds(5))
                                 .socketTimeout(java.time.Duration.ofSeconds(10))
                 )
+                .overrideConfiguration(
+                        configuration -> configuration
+                                .retryStrategy(
+                                        strategy -> strategy.maxAttempts(1)
+                                )
+                )
                 .build();
 
         long dynamoClientDuration =
