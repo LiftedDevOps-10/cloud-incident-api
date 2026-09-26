@@ -30,9 +30,7 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
         this.dynamoDbClient = DynamoDbClient.builder()
                 .region(software.amazon.awssdk.regions.Region.EU_NORTH_1)
                 .httpClientBuilder(
-                        software.amazon.awssdk.http.apache.ApacheHttpClient.builder()
-                                .connectionTimeout(java.time.Duration.ofSeconds(5))
-                                .socketTimeout(java.time.Duration.ofSeconds(10))
+                        software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient.builder()
                 )
                 .overrideConfiguration(
                         configuration -> configuration
@@ -337,6 +335,7 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
         }
 
         long dynamoStartTime = System.currentTimeMillis();
+        System.out.println("DynamoDB PutItem starting at " + dynamoStartTime + " ms");
 
         dynamoDbClient.putItem(
                 PutItemRequest.builder()
@@ -391,6 +390,14 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
     private Map<String, Object> getIncident(
             String incidentId) throws Exception {
 
+        long dynamoStartTime = System.currentTimeMillis();
+
+        System.out.println(
+                "DynamoDB GetItem starting at "
+                        + dynamoStartTime
+                        + " ms"
+        );
+
         var result = dynamoDbClient.getItem(
                 GetItemRequest.builder()
                         .tableName(TABLE_NAME)
@@ -403,6 +410,15 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
                                 )
                         )
                         .build()
+        );
+
+        long dynamoDuration =
+                System.currentTimeMillis() - dynamoStartTime;
+
+        System.out.println(
+                "DynamoDB GetItem completed in "
+                        + dynamoDuration
+                        + " ms"
         );
 
         if (!result.hasItem()) {

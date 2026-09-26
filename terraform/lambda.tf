@@ -14,7 +14,7 @@ resource "aws_lambda_function" "cloud_incident_api" {
   )
 
   timeout     = 30
-  memory_size = 128
+  memory_size = 256
 
   tags = {
     Name        = "cloud-incident-api"
