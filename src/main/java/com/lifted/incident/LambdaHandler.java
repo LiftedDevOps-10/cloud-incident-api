@@ -59,11 +59,14 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
 
        long startTime = System.currentTimeMillis();
 
+       String requestId = context != null && context.getAwsRequestId() != null
+               ? context.getAwsRequestId()
+               : UUID.randomUUID().toString();
+
        System.out.println(
-               "Lambda request received: "
-                       + getHttpMethod(input)
-                       + " "
-                       + getPath(input)
+               "REQUEST requestId=" + requestId
+                       + " method=" + getHttpMethod(input)
+                       + " path=" + getPath(input)
        );
 
        try {
@@ -77,12 +80,13 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
              long duration = System.currentTimeMillis() - startTime;
 
              System.out.println(
-                     "Lambda request completed in "
-                             + duration
-                             + " ms"
+                     "RESPONSE requestId=" + requestId
+                             + " status=" + response.get("statusCode")
+                             + " duration_ms=" + duration
              );
 
              return response;
+
          }
 
           if ("POST".equalsIgnoreCase(method)
@@ -93,9 +97,9 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
               long duration = System.currentTimeMillis() - startTime;
 
               System.out.println(
-                      "Lambda request completed in "
-                              + duration
-                            + " ms"
+                      "RESPONSE requestId=" + requestId
+                              + " status=" + response.get("statusCode")
+                              + " duration_ms=" + duration
               );
 
               return response;
@@ -109,9 +113,9 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
               long duration = System.currentTimeMillis() - startTime;
 
               System.out.println(
-                      "Lambda request completed in "
-                              + duration
-                              + " ms"
+                      "RESPONSE requestId=" + requestId
+                              + " status=" + response.get("statusCode")
+                              + " duration_ms=" + duration
               );
 
               return response;
@@ -127,9 +131,9 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
               long duration = System.currentTimeMillis() - startTime;
 
               System.out.println(
-                      "Lambda request completed in "
-                              + duration
-                              + " ms"
+                      "RESPONSE requestId=" + requestId
+                              + " status=" + response.get("statusCode")
+                              + " duration_ms=" + duration
               );
 
               return response;
@@ -146,9 +150,9 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
               long duration = System.currentTimeMillis() - startTime;
 
               System.out.println(
-                      "Lambda request completed in "
-                              + duration
-                              + " ms"
+                      "RESPONSE requestId=" + requestId
+                              + " status=" + response.get("statusCode")
+                              + " duration_ms=" + duration
               );
 
               return response;
@@ -165,26 +169,28 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
               long duration = System.currentTimeMillis() - startTime;
 
               System.out.println(
-                      "Lambda request completed in "
-                              + duration
-                              + " ms"
+                      "RESPONSE requestId=" + requestId
+                              + " status=" + response.get("statusCode")
+                              + " duration_ms=" + duration
               );
 
               return response;
           }
 
-             long duration = System.currentTimeMillis() - startTime;
-
-             System.out.println(
-                     "Lambda request completed in "
-                             + duration
-                             + " ms"
-             );
-
-             return response(
+             Map<String, Object> response = response(
                      404,
                      "{\"message\":\"Route not found\"}"
              );
+
+             long duration = System.currentTimeMillis() - startTime;
+
+             System.out.println(
+                     "RESPONSE requestId=" + requestId
+                             + " status=" + response.get("statusCode")
+                             + " duration_ms=" + duration
+             );
+
+             return response;
 
          } catch (Exception e) {
 
@@ -194,18 +200,20 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
                 );
             }
 
-            long duration = System.currentTimeMillis() - startTime;
-
-            System.out.println(
-                    "Lambda request completed in "
-                            + duration
-                            + " ms"
-            );
-
-            return response(
+            Map<String, Object> response = response(
                     500,
                     "{\"message\":\"Internal server error\"}"
             );
+
+            long duration = System.currentTimeMillis() - startTime;
+
+            System.out.println(
+                    "RESPONSE requestId=" + requestId
+                            + " status=" + response.get("statusCode")
+                            + " duration_ms=" + duration
+            );
+
+            return response;
         }
 
     }
