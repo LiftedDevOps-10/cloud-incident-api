@@ -194,11 +194,13 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
 
          } catch (Exception e) {
 
-            if (context != null) {
-                context.getLogger().log(
-                        "ERROR: " + e.getMessage()
-                );
-            }
+            System.err.println(
+                    "ERROR requestId=" + requestId
+                            + " exceptionType=" + e.getClass().getSimpleName()
+                            + " message=" + e.getMessage()
+            );
+
+            e.printStackTrace(System.err);
 
             Map<String, Object> response = response(
                     500,
